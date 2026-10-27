@@ -4,6 +4,7 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import FastAPI, Request, Depends
 from webhook.utils import (
+    check_idempotency_key,
     load_webhook_signing_keys,
     webhook_validation,
     webhook_subscription)
@@ -24,6 +25,7 @@ async def store_inventory_data_webhook(
 
     if webhook_subscription(response=request):
         return WEBHOOK_SUCCEEDED_RETURN
+    
     webhook_signing_keys: Sequence[str] | None = await load_webhook_signing_keys(session=inventory_session)
     await webhook_validation(request=request, webhook_signing_keys=webhook_signing_keys)
     return WEBHOOK_SUCCEEDED_RETURN

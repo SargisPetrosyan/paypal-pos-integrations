@@ -9,7 +9,7 @@ from sqlalchemy import Engine
 from sqlmodel import SQLModel, create_engine, select
 from sqlmodel.sql._expression_select_cls import SelectOfScalar
 from fastapi import HTTPException, Request
-from shared.core.db_models import PaypalPosSigningKey
+from shared.core.db_models import PaypalMessageIdLog, PaypalPosSigningKey
 
 logger: logging.Logger = logging.getLogger(name=__name__)
 
@@ -56,3 +56,13 @@ class SigningKeyEngine():
     def __init__(self)  -> None:
         self.engine: Engine = create_engine(os.environ["SIGNING_KEYS_DB_URL"])
         SQLModel.metadata.create_all(self.engine)
+
+async def check_idempotency_key(request:Request, session: AsyncSession) -> bool:
+    request_data = await request.json()
+    statement: SelectOfScalar = select(PaypalMessageIdLog.message_id).where(
+        PaypalMessageIdLog.message_id == request_data.get("message_id")
+    )
+    result: Sequence[str] = (await session.execute(statement=statement)).scalars().all()
+    if result:
+        return True
+    return False

@@ -12,7 +12,7 @@ class InventoryDBUpdater:
     inventory_balance_update: InventoryBalanceUpdateValidator
     inventory_update_repository: InventoryBalanceUpdateRepository
 
-    async def store_inventory_update(self):
+    async def store_inventory_update(self) -> dict:
         inventory_update:InventoryBalanceUpdateModel = InventoryBalanceUpdateModel(
             timestamp=self.inventory_balance_update.timestamp,
             organization_uuid=self.inventory_balance_update.payload.organization_uuid,
@@ -22,6 +22,6 @@ class InventoryDBUpdater:
             after=self.inventory_balance_update.payload.balance_after[0].balance
             )
 
-        return await self.inventory_te_repository.store_inventory_data(
+        return await self.inventory_update_repository.store_inventory_data(
             inventory_update=inventory_update
         )
