@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import FastAPI, HTTPException, Request, Depends
 from webhook.utils import (
     check_idempotency,
-    check_idempotency_key,
     load_webhook_signing_keys,
     webhook_validation,
     webhook_subscription)

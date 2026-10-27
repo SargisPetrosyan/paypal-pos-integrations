@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import logging
-from shared.core.constants import WEBHOOK_SUCCEEDED_RETURN
+from shared.core.constants import WEBHOOK_SUCCEEDED_RETURN, WebhookReturn
 from sqlalchemy.ext.asyncio import AsyncSession
 from shared.core.db_models import InventoryBalanceUpdateModel
 
@@ -13,7 +13,7 @@ class InventoryBalanceUpdateRepository:
 
     async def store_inventory_data(
         self, inventory_update: InventoryBalanceUpdateModel
-    ) -> dict:
+    ) -> WebhookReturn:
 
         try:
             self.session.add(instance=inventory_update)
