@@ -8,16 +8,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Engine
 from sqlmodel import SQLModel, create_engine, select
 from sqlmodel.sql._expression_select_cls import SelectOfScalar
-
 from fastapi import HTTPException, Request
-
 from shared.core.db_models import PaypalPosSigningKey
 
 logger: logging.Logger = logging.getLogger(name=__name__)
 
 
-def webhook_subscription(response: dict,) -> bool:
-    if response.get("eventName") == "TestMessage":
+def webhook_subscription(response: Request) -> bool:
+    if response.headers.get("x-izettle-event-name") == "TestMessage":
         return True
     return False
 

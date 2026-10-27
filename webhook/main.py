@@ -22,8 +22,7 @@ async def store_inventory_data_webhook(
     request: Request,
     inventory_session:AsyncSession  = Depends(dependency=get_db_session))  -> WebhookReturn:
 
-    request_data: dict = await request.json()
-    if webhook_subscription(response=request_data):
+    if webhook_subscription(response=request):
         return WEBHOOK_SUCCEEDED_RETURN
     webhook_signing_keys: Sequence[str] | None = await load_webhook_signing_keys(session=inventory_session)
     await webhook_validation(request=request, webhook_signing_keys=webhook_signing_keys)
