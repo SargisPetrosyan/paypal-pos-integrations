@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import logging
+from shared.core.constants import WebhookReturn
 from shared.core.db_models import InventoryBalanceUpdateModel
 from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from shared.core.repository import InventoryBalanceUpdateRepository
@@ -12,7 +13,7 @@ class InventoryDBUpdater:
     inventory_balance_update: InventoryBalanceUpdateValidator
     inventory_update_repository: InventoryBalanceUpdateRepository
 
-    async def store_inventory_update(self) -> dict:
+    async def store_inventory_update(self) -> WebhookReturn:
         inventory_update:InventoryBalanceUpdateModel = InventoryBalanceUpdateModel(
             timestamp=self.inventory_balance_update.timestamp,
             organization_uuid=self.inventory_balance_update.payload.organization_uuid,
