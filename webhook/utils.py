@@ -10,6 +10,7 @@ from sqlmodel import SQLModel, create_engine, select
 from sqlmodel.sql._expression_select_cls import SelectOfScalar
 from fastapi import HTTPException, Request
 from shared.core.db_models import PaypalMessageIdLog, PaypalPosSigningKey
+from shared.core.inventory_models import InventoryBalanceUpdateValidator 
 
 logger: logging.Logger = logging.getLogger(name=__name__)
 
@@ -26,7 +27,14 @@ async def webhook_validation(request:Request, webhook_signing_keys:Sequence[str]
             status_code=401,
             detail="No signing keys found for validation"
         )
+    
     received_signature: str = request.headers.get("x-izettle-signature", "")
+    if received_signature == "":
+        raise HTTPException(
+            status_code=401,
+            detail="Missing webhook signature"
+        )
+    
     raw_body: bytes = await request.body()
     validated:bool = False
     for Key_data in webhook_signing_keys:
@@ -35,7 +43,8 @@ async def webhook_validation(request:Request, webhook_signing_keys:Sequence[str]
             msg=raw_body,
             digestmod=hashlib.sha256
         ).hexdigest()
-
+        if received_signature.startswith("sha256="):
+            received_signature = received_signature.split("sha256=")[1]
         if hmac.compare_digest(expected_signature, received_signature):
             validated = True
             break
@@ -57,10 +66,9 @@ class SigningKeyEngine():
         self.engine: Engine = create_engine(os.environ["SIGNING_KEYS_DB_URL"])
         SQLModel.metadata.create_all(self.engine)
 
-async def check_idempotency(request:Request, session: AsyncSession) -> bool:
-    request_data = await request.json()
+async def check_idempotency(validated_request_body: InventoryBalanceUpdateValidator, session: AsyncSession) -> bool:
     statement: SelectOfScalar = select(PaypalMessageIdLog.message_id).where(
-        PaypalMessageIdLog.message_id == request_data.get("message_id")
+        PaypalMessageIdLog.message_id == validated_request_body.message_id
     )
     result: Sequence[str] = (await session.execute(statement=statement)).scalars().all()
     if result:

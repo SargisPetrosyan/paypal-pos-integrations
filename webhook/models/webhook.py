@@ -3,7 +3,7 @@ from pydantic import BaseModel, HttpUrl, EmailStr
 from typing import Literal
 from datetime import datetime
 
-from webhook.models.inventory import BaseSchema
+from shared.core.inventory_models import BaseSchema
 
 class WebhookCheck(BaseModel):
     uuid: UUID

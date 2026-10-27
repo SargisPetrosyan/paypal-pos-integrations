@@ -3,6 +3,7 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import FastAPI, HTTPException, Request, Depends
+from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from webhook.utils import (
     check_idempotency,
     load_webhook_signing_keys,
@@ -28,6 +29,7 @@ async def store_inventory_data_webhook(
     
     webhook_signing_keys: Sequence[str] | None = await load_webhook_signing_keys(session=inventory_session)
     await webhook_validation(request=request, webhook_signing_keys=webhook_signing_keys)
-    if await check_idempotency(request=request, session=inventory_session):
+    validated_request_body: InventoryBalanceUpdateValidator = InventoryBalanceUpdateValidator.model_validate_json(json_data=await request.json())
+    if await check_idempotency(validated_request_body=validated_request_body, session=inventory_session):
         return HTTPException(status_code=409, detail="Idempotency key already exists")
     return WEBHOOK_SUCCEEDED_RETURN
