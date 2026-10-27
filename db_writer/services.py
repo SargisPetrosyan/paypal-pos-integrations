@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import logging
 from shared.core.db_models import InventoryBalanceUpdateModel
-from shared.core.inventory import InventoryBalanceUpdateValidator
+from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from shared.core.repository import InventoryBalanceUpdateRepository
 
 logger: logging.Logger = logging.getLogger(name=__name__)

@@ -57,7 +57,7 @@ class SigningKeyEngine():
         self.engine: Engine = create_engine(os.environ["SIGNING_KEYS_DB_URL"])
         SQLModel.metadata.create_all(self.engine)
 
-async def check_idempotency_key(request:Request, session: AsyncSession) -> bool:
+async def check_idempotency(request:Request, session: AsyncSession) -> bool:
     request_data = await request.json()
     statement: SelectOfScalar = select(PaypalMessageIdLog.message_id).where(
         PaypalMessageIdLog.message_id == request_data.get("message_id")

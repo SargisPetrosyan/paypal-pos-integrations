@@ -2,8 +2,9 @@ from typing import Sequence
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends
 from webhook.utils import (
+    check_idempotency,
     check_idempotency_key,
     load_webhook_signing_keys,
     webhook_validation,
@@ -21,11 +22,13 @@ app = FastAPI()
 @app.post(path="/inventory_tracker_webhook")
 async def store_inventory_data_webhook(
     request: Request,
-    inventory_session:AsyncSession  = Depends(dependency=get_db_session))  -> WebhookReturn:
+    inventory_session:AsyncSession  = Depends(dependency=get_db_session))  -> WebhookReturn | HTTPException:
 
     if webhook_subscription(response=request):
         return WEBHOOK_SUCCEEDED_RETURN
     
     webhook_signing_keys: Sequence[str] | None = await load_webhook_signing_keys(session=inventory_session)
     await webhook_validation(request=request, webhook_signing_keys=webhook_signing_keys)
+    if await check_idempotency(request=request, session=inventory_session):
+        return HTTPException(status_code=409, detail="Idempotency key already exists")
     return WEBHOOK_SUCCEEDED_RETURN

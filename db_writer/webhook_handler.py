@@ -1,7 +1,7 @@
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from shared.core.inventory import InventoryBalanceUpdateValidator
+from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from shared.core.repository import InventoryBalanceUpdateRepository
 from db_writer.services import InventoryDBUpdater
 
