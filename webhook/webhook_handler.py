@@ -1,26 +1,20 @@
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from shared.core.constants import WebhookReturn
 from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from shared.core.repository import InventoryBalanceUpdateRepository
-from db_writer.services import InventoryDBUpdater
+from webhook.services import InventoryDBUpdater
 
 logger: logging.Logger = logging.getLogger(name=__name__)
 
 
-class SubscriptionHandler:
-    async def process_subscription(
+class WebhookHandler:
+    async def process_webhook(
         self,
         inventory_update: InventoryBalanceUpdateValidator,
         session: AsyncSession,
-    ) :
-
-        logger.info(
-            "Balance data: before=%i items, after=%d items",
-            len(inventory_update.payload.balance_before),
-            len(inventory_update.payload.balance_after),
-            )
-
+    )  -> WebhookReturn:
         inventory_update_repository: InventoryBalanceUpdateRepository = (
             InventoryBalanceUpdateRepository(session=session)
         )

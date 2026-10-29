@@ -9,13 +9,17 @@ from webhook.utils import (
     load_webhook_signing_keys,
     webhook_validation,
     webhook_subscription)
+from webhook.webhook_handler import WebhookHandler
 
-from shared.core.constants import WEBHOOK_SUCCEEDED_RETURN, WebhookReturn
 from shared.core.logging import setup_logger
+from shared.core.constants import (
+    WEBHOOK_SUCCEEDED_RETURN, 
+    WebhookReturn)
 from shared.core.config import get_db_session
 
 setup_logger()
 logger: logging.Logger = logging.getLogger(name=__name__)
+webhook_handler: WebhookHandler = WebhookHandler()
 
 app = FastAPI()
 
@@ -32,4 +36,5 @@ async def store_inventory_data_webhook(
     validated_request_body: InventoryBalanceUpdateValidator = InventoryBalanceUpdateValidator.model_validate_json(json_data=await request.json())
     if await check_idempotency(validated_request_body=validated_request_body, session=inventory_session):
         return HTTPException(status_code=409, detail="Idempotency key already exists")
-    return WEBHOOK_SUCCEEDED_RETURN
+    return await webhook_handler.process_webhook(inventory_update=validated_request_body, session=inventory_session)
+

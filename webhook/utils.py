@@ -3,6 +3,7 @@ import hmac
 import logging
 import hashlib
 from typing import Sequence
+from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Engine
@@ -74,3 +75,17 @@ async def check_idempotency(validated_request_body: InventoryBalanceUpdateValida
     if result:
         return True
     return False
+
+
+logger: logging.Logger = logging.getLogger(name=__name__)
+
+class ShopInfo:
+    def __init__(self) -> None:
+        self.dict = {
+            UUID(os.environ["DALA_ORGANIZATION_UUID"]): "DALA_SHOP",
+            UUID(os.environ["ART_ORGANIZATION_UUID"]): "ART_CRAFT",
+            UUID(os.environ["CAFE_ORGANIZATION_UUID"]): "CAFE",
+        }
+
+    def get_shop_name_by_id(self, shop_id: UUID):
+        return self.dict[shop_id]

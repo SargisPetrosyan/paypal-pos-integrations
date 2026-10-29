@@ -5,7 +5,6 @@ from uuid import UUID
 from pydantic import BaseModel,ConfigDict
 from pydantic.alias_generators import to_camel
 
-#caseName to camel_case
 class BaseSchema(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,
