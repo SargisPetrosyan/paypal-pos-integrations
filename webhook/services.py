@@ -19,12 +19,8 @@ class InventoryDBUpdater:
         inventory_update: InventoryBalanceUpdateModel = InventoryBalanceUpdateModel(
             timestamp=self.inventory_balance_update.timestamp,
             organization_uuid=self.inventory_balance_update.payload.organization_uuid,
-            product_uuid=self.inventory_balance_update.payload.balance_before[
-                0
-            ].product_uuid,
-            variant_uuid=self.inventory_balance_update.payload.balance_before[
-                0
-            ].variant_uuid,
+            product_uuid=self.inventory_balance_update.payload.balance_before[0].product_uuid,
+            variant_uuid=self.inventory_balance_update.payload.balance_before[0].variant_uuid,
             before=self.inventory_balance_update.payload.balance_before[0].balance,
             after=self.inventory_balance_update.payload.balance_after[0].balance,
         )

@@ -2,7 +2,7 @@ from typing import Sequence
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, Request, Depends
 from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from webhook.utils import (
     check_idempotency,

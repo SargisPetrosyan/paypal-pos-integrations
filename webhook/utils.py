@@ -4,6 +4,9 @@ import logging
 import hashlib
 from typing import Sequence
 from uuid import UUID
+from datetime import datetime
+import pytz
+from dataclasses import dataclass, field
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Engine
@@ -12,6 +15,10 @@ from sqlmodel.sql._expression_select_cls import SelectOfScalar
 from fastapi import HTTPException, Request
 from shared.core.db_models import PaypalMessageIdLog, PaypalPosSigningKey
 from shared.core.inventory_models import InventoryBalanceUpdateValidator
+from shared.core.constants import (
+    UTC_TIMEZONE_NAME,
+    SHOP_SUBSCRIPTION_EVENTS,
+    WEBHOOK_NAME)
 
 logger: logging.Logger = logging.getLogger(name=__name__)
 
@@ -90,3 +97,27 @@ class ShopInfo:
 
     def get_shop_name_by_id(self, shop_id: UUID):
         return self.dict[shop_id]
+
+
+def any_to_utc(date: datetime) -> datetime:
+    """convert any timezone datetime to utc"""
+    utc: datetime = date.astimezone(pytz.timezone(UTC_TIMEZONE_NAME))
+    return utc
+
+
+@dataclass
+class CredentialContext:
+    shop_name: str
+    mail: str = os.environ["MAIL"]
+    events: list[str] = field(default_factory=list[str])
+    subscription_uuid: str = field(init=False)
+    destination_url: str = field(init=False)
+
+    def __post_init__(self):
+        self.subscription_uuid: str = os.environ[
+            f"{self.shop_name.upper()}_SUBSCRIPTION_UUID"
+        ]
+        self.destination_url: str = (
+            os.environ["DESTINATION_URL"] + "/" + WEBHOOK_NAME
+        )
+        self.events = SHOP_SUBSCRIPTION_EVENTS
