@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 import logging
-from shared.core.constants import WebhookSuccessReturn
 from shared.core.db_models import InventoryBalanceUpdateModel
 from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from shared.core.repository import InventoryBalanceUpdateRepository
-from shared.core.constants import WEBHOOK_SUCCEEDED_RETURN
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -15,23 +13,26 @@ logger: logging.Logger = logging.getLogger(name=__name__)
 class InventoryDBUpdater:
     inventory_balance_update: InventoryBalanceUpdateValidator
     inventory_update_repository: InventoryBalanceUpdateRepository
-    session: AsyncSession 
+    session: AsyncSession
 
-    async def store_inventory_update(self) -> WebhookSuccessReturn:
-        inventory_update:InventoryBalanceUpdateModel = InventoryBalanceUpdateModel(
+    async def store_inventory_update(self) -> None:
+        inventory_update: InventoryBalanceUpdateModel = InventoryBalanceUpdateModel(
             timestamp=self.inventory_balance_update.timestamp,
             organization_uuid=self.inventory_balance_update.payload.organization_uuid,
-            product_uuid=self.inventory_balance_update.payload.balance_before[0].product_uuid,
-            variant_uuid=self.inventory_balance_update.payload.balance_before[0].variant_uuid,
+            product_uuid=self.inventory_balance_update.payload.balance_before[
+                0
+            ].product_uuid,
+            variant_uuid=self.inventory_balance_update.payload.balance_before[
+                0
+            ].variant_uuid,
             before=self.inventory_balance_update.payload.balance_before[0].balance,
-            after=self.inventory_balance_update.payload.balance_after[0].balance
-            )
-        
+            after=self.inventory_balance_update.payload.balance_after[0].balance,
+        )
+
         try:
             await self.inventory_update_repository.store_inventory_data(
-            inventory_update=inventory_update)
-            return WEBHOOK_SUCCEEDED_RETURN
+                inventory_update=inventory_update
+            )
         except Exception as e:
             await self.session.rollback()
             raise e
-        

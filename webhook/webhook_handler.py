@@ -1,7 +1,6 @@
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from shared.core.constants import WebhookSuccessReturn
 from shared.core.inventory_models import InventoryBalanceUpdateValidator
 from shared.core.repository import InventoryBalanceUpdateRepository
 from webhook.services import InventoryDBUpdater
@@ -14,7 +13,7 @@ class WebhookHandler:
         self,
         inventory_update: InventoryBalanceUpdateValidator,
         session: AsyncSession,
-    )  -> WebhookSuccessReturn:
+    ) -> None:
         inventory_update_repository: InventoryBalanceUpdateRepository = (
             InventoryBalanceUpdateRepository(session=session)
         )
@@ -22,7 +21,7 @@ class WebhookHandler:
         inventory_balance_updater = InventoryDBUpdater(
             inventory_balance_update=inventory_update,
             inventory_update_repository=inventory_update_repository,
-            session=session
+            session=session,
         )
 
         return await inventory_balance_updater.store_inventory_update()

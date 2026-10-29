@@ -11,7 +11,7 @@ from sqlmodel import SQLModel, create_engine, select
 from sqlmodel.sql._expression_select_cls import SelectOfScalar
 from fastapi import HTTPException, Request
 from shared.core.db_models import PaypalMessageIdLog, PaypalPosSigningKey
-from shared.core.inventory_models import InventoryBalanceUpdateValidator 
+from shared.core.inventory_models import InventoryBalanceUpdateValidator
 
 logger: logging.Logger = logging.getLogger(name=__name__)
 
@@ -22,27 +22,25 @@ def webhook_subscription(response: Request) -> bool:
     return False
 
 
-async def webhook_validation(request:Request, webhook_signing_keys:Sequence[str] | None) -> None:
+async def webhook_validation(
+    request: Request, webhook_signing_keys: Sequence[str] | None
+) -> None:
     if not webhook_signing_keys:
         raise HTTPException(
-            status_code=401,
-            detail="No signing keys found for validation"
+            status_code=401, detail="No signing keys found for validation"
         )
-    
+
     received_signature: str = request.headers.get("x-izettle-signature", "")
     if received_signature == "":
-        raise HTTPException(
-            status_code=401,
-            detail="Missing webhook signature"
-        )
-    
+        raise HTTPException(status_code=401, detail="Missing webhook signature")
+
     raw_body: bytes = await request.body()
-    validated:bool = False
+    validated: bool = False
     for Key_data in webhook_signing_keys:
         expected_signature: str = hmac.new(
             key=Key_data.encode(encoding="utf-8"),
             msg=raw_body,
-            digestmod=hashlib.sha256
+            digestmod=hashlib.sha256,
         ).hexdigest()
         if received_signature.startswith("sha256="):
             received_signature = received_signature.split("sha256=")[1]
@@ -50,23 +48,26 @@ async def webhook_validation(request:Request, webhook_signing_keys:Sequence[str]
             validated = True
             break
     if not validated:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid webhook signature"
-        )
+        raise HTTPException(status_code=401, detail="Invalid webhook signature")
+
 
 async def load_webhook_signing_keys(session: AsyncSession) -> Sequence[str] | None:
     statement: SelectOfScalar = select(PaypalPosSigningKey.signing_key)
-    results: Sequence[str] = (await session.execute(statement=statement)).scalars().all()
+    results: Sequence[str] = (
+        (await session.execute(statement=statement)).scalars().all()
+    )
     return results
 
 
-class SigningKeyEngine():
-    def __init__(self)  -> None:
+class SigningKeyEngine:
+    def __init__(self) -> None:
         self.engine: Engine = create_engine(os.environ["SIGNING_KEYS_DB_URL"])
         SQLModel.metadata.create_all(self.engine)
 
-async def check_idempotency(validated_request_body: InventoryBalanceUpdateValidator, session: AsyncSession) -> bool:
+
+async def check_idempotency(
+    validated_request_body: InventoryBalanceUpdateValidator, session: AsyncSession
+) -> bool:
     statement: SelectOfScalar = select(PaypalMessageIdLog.message_id).where(
         PaypalMessageIdLog.message_id == validated_request_body.message_id
     )
@@ -77,6 +78,7 @@ async def check_idempotency(validated_request_body: InventoryBalanceUpdateValida
 
 
 logger: logging.Logger = logging.getLogger(name=__name__)
+
 
 class ShopInfo:
     def __init__(self) -> None:

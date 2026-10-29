@@ -5,21 +5,23 @@ from datetime import datetime
 
 from shared.core.inventory_models import BaseSchema
 
+
 class WebhookCheck(BaseModel):
     uuid: UUID
     status: str
+
 
 class AccessToken(BaseModel):
     access_token: str
     expires_in: int
 
+
 class WebhookSubscription(BaseSchema):
     uuid: str
-    transport_name: Literal['WEBHOOK']
+    transport_name: Literal["WEBHOOK"]
     event_names: list[str]
     updated: datetime
     destination: HttpUrl
     contact_email: EmailStr
     status: str
     signing_key: str
-    
