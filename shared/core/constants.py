@@ -6,7 +6,7 @@ load_dotenv()
 class Response(TypedDict):
     message: str
 
-class WebhookReturn(TypedDict):
+class WebhookSuccessReturn(TypedDict):
     status: str
     response: Response
 
@@ -30,7 +30,7 @@ PAYPAL_HEADERS = "application/x-www-form-urlencoded"
 
 SHOP_SUBSCRIPTION_EVENTS: list[str] = ["InventoryBalanceChanged"]
 
-WEBHOOK_SUCCEEDED_RETURN:WebhookReturn= {
+WEBHOOK_SUCCEEDED_RETURN:WebhookSuccessReturn= {
     "status": "200",
     "response": {
         "message": "Webhook Succeeded",

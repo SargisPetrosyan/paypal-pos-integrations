@@ -14,7 +14,7 @@ from webhook.webhook_handler import WebhookHandler
 from shared.core.logging import setup_logger
 from shared.core.constants import (
     WEBHOOK_SUCCEEDED_RETURN, 
-    WebhookReturn)
+    WebhookSuccessReturn)
 from shared.core.config import get_db_session
 
 setup_logger()
@@ -26,7 +26,7 @@ app = FastAPI()
 @app.post(path="/inventory_tracker_webhook")
 async def store_inventory_data_webhook(
     request: Request,
-    inventory_session:AsyncSession  = Depends(dependency=get_db_session))  -> WebhookReturn | HTTPException:
+    inventory_session:AsyncSession  = Depends(dependency=get_db_session))  -> WebhookSuccessReturn | HTTPException:
 
     if webhook_subscription(response=request):
         return WEBHOOK_SUCCEEDED_RETURN
@@ -37,4 +37,3 @@ async def store_inventory_data_webhook(
     if await check_idempotency(validated_request_body=validated_request_body, session=inventory_session):
         return HTTPException(status_code=409, detail="Idempotency key already exists")
     return await webhook_handler.process_webhook(inventory_update=validated_request_body, session=inventory_session)
-

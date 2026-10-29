@@ -55,7 +55,6 @@ async def webhook_validation(request:Request, webhook_signing_keys:Sequence[str]
             detail="Invalid webhook signature"
         )
 
-    
 async def load_webhook_signing_keys(session: AsyncSession) -> Sequence[str] | None:
     statement: SelectOfScalar = select(PaypalPosSigningKey.signing_key)
     results: Sequence[str] = (await session.execute(statement=statement)).scalars().all()
