@@ -25,3 +25,13 @@ class WebhookSubscription(BaseSchema):
     contact_email: EmailStr
     status: str
     signing_key: str
+
+
+class WebhookSubscriptionResponse(BaseSchema):
+    uuid: str
+    transport_name: Literal['WEBHOOK']
+    event_names: list[str]
+    updated: datetime
+    destination: HttpUrl
+    contact_email: EmailStr
+    status: str

@@ -7,6 +7,7 @@ from uuid import UUID
 from datetime import datetime
 import pytz
 from dataclasses import dataclass, field
+from dotenv import load_dotenv
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Engine
@@ -21,6 +22,8 @@ from shared.core.constants import (
     WEBHOOK_NAME)
 
 logger: logging.Logger = logging.getLogger(name=__name__)
+
+load_dotenv()
 
 
 def webhook_subscription(response: Request) -> bool:
@@ -73,10 +76,10 @@ class SigningKeyEngine:
 
 
 async def check_idempotency(
-    validated_request_body: InventoryBalanceUpdateValidator, session: AsyncSession
+    request: InventoryBalanceUpdateValidator, session: AsyncSession
 ) -> bool:
     statement: SelectOfScalar = select(PaypalMessageIdLog.message_id).where(
-        PaypalMessageIdLog.message_id == validated_request_body.message_id
+        PaypalMessageIdLog.message_id == request.message_id
     )
     result: Sequence[str] = (await session.execute(statement=statement)).scalars().all()
     if result:

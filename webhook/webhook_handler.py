@@ -24,4 +24,4 @@ class WebhookHandler:
             session=session,
         )
 
-        return await inventory_balance_updater.store_inventory_update()
+        await inventory_balance_updater.store_inventory_update()

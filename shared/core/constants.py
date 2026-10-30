@@ -37,6 +37,6 @@ WEBHOOK_SUCCEEDED_RETURN:WebhookSuccessReturn= {
     }
 }
 
-
 ACCESS_KEY_EXPIRES_DATE: str = "access_key_expiration_date"
 WEBHOOK_NAME:str = "inventory_tracker_webhook"
+WEBHOOK_LOG_FILE: str = "webhook/logs/data_registry_logs.log"
