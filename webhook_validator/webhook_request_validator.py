@@ -21,4 +21,4 @@ def webhook_handler(_event: WebhookRequestTypeDict, _context) -> None | dict:
     webhook_validation(header=header, body=body, webhook_signing_keys=webhook_signing_keys)
     if if_idempotent():
         raise ValueError("Duplicate webhook received")
-    # ut in a SQS queue for processing
+    # put in a SQS queue for processing

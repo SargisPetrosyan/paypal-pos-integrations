@@ -87,3 +87,9 @@ def test_webhook_validation_with_invalid_signature():
             header=mocked_event.get("headers"),
             body=mocked_event.get("body"),
             webhook_signing_keys=webhook_signing_keys)
+
+
+def test_idempotent_behavior():
+    mocked_event = deepcopy(mocked_webhook_subscription_event_valid)
+    with pytest.raises(expected_exception=ValueError, match="Duplicate webhook received"):
+        webhook_handler(mocked_event, None)

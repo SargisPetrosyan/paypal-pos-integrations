@@ -63,7 +63,7 @@ def load_webhook_signing_keys() -> Sequence[str] | None:
 def if_idempotent() -> bool:
     # This function should check if the webhook has already been processed
     # For example, it could check a database or cache for a unique identifier in the webhook
-    return True
+    return False
 
 
 logger: logging.Logger = logging.getLogger(name=__name__)
