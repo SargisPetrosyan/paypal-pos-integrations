@@ -1,0 +1,15 @@
+[project]
+name = "webhook-validator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pydantic[email]>=2.14.3",
+    "pytest>=9.2.0",
+    "pytz>=2026.6",
+    "dotenv>=0.9.9",
+    "sqlalchemy>=2.1.8",
+    "sqlmodel>=0.0.49",
+]
