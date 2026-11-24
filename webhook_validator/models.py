@@ -1,7 +1,7 @@
 from uuid import UUID
-from pydantic import BaseModel, HttpUrl, EmailStr
 from typing import Literal
 from datetime import datetime
+from pydantic import BaseModel, HttpUrl, EmailStr
 
 from shared.inventory_models import BaseSchema
 
@@ -17,7 +17,7 @@ class AccessToken(BaseModel):
 
 
 class WebhookSubscription(BaseSchema):
-    uuid: str
+    uuid: UUID
     transport_name: Literal["WEBHOOK"]
     event_names: list[str]
     updated: datetime
@@ -29,7 +29,7 @@ class WebhookSubscription(BaseSchema):
 
 class WebhookSubscriptionResponse(BaseSchema):
     uuid: UUID
-    transport_name: Literal['WEBHOOK']
+    transport_name: Literal["WEBHOOK"]
     event_names: list[str]
     updated: datetime
     destination: HttpUrl

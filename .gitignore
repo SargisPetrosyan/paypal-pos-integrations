@@ -55,5 +55,6 @@ app/creds/zettle/*
 
 # Data files (local/temporary)
 data/
+packages/
 test.py
 *.md
