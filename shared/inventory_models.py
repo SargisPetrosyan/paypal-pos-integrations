@@ -2,16 +2,18 @@ from datetime import datetime
 from dataclasses import dataclass
 from uuid import UUID
 
-from pydantic import BaseModel,ConfigDict
+from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
-#caseName to camel_case
+
+# caseName to camel_case
 class BaseSchema(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,
         populate_by_name=True,
         from_attributes=True,
     )
+
 
 class Updated(BaseSchema):
     uuid: UUID

@@ -8,7 +8,7 @@ from logging.handlers import RotatingFileHandler
 from pytz import timezone
 import logging
 
-from shared.core.constants import SWEDEN_TIMEZONE_NAME
+from shared.constants import SWEDEN_TIMEZONE_NAME
 
 
 def setup_logger() -> None:
@@ -39,4 +39,3 @@ def setup_logger() -> None:
 
     # Setting the threshold of logger to DEBUG
     logger.setLevel(level=logging.INFO)
-

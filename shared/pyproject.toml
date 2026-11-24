@@ -1,0 +1,12 @@
+[project]
+name = "shared"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aurora-dsql-python-connector>=0.2.7",
+    "dotenv>=0.9.9",
+    "psycopg[binary,pool]>=3.3.9",
+    "pytz>=2026.6",
+]

@@ -1,14 +1,18 @@
-from dotenv import load_dotenv
-from typing import Literal
 from typing import TypedDict
+from typing import Literal
+from dotenv import load_dotenv
+
 load_dotenv()
+
 
 class Response(TypedDict):
     message: str
 
+
 class WebhookSuccessReturn(TypedDict):
     status: str
     response: Response
+
 
 PAGE_SIZE_FOR_LIST_FILES: int = 100
 
@@ -30,13 +34,19 @@ PAYPAL_HEADERS = "application/x-www-form-urlencoded"
 
 SHOP_SUBSCRIPTION_EVENTS: list[str] = ["InventoryBalanceChanged"]
 
-WEBHOOK_SUCCEEDED_RETURN:WebhookSuccessReturn= {
+WEBHOOK_SUCCEEDED_RETURN: WebhookSuccessReturn = {
     "status": "200",
     "response": {
         "message": "Webhook Succeeded",
-    }
+    },
 }
 
 ACCESS_KEY_EXPIRES_DATE: str = "access_key_expiration_date"
-WEBHOOK_NAME:str = "inventory_tracker_webhook"
+WEBHOOK_NAME: str = "inventory_tracker_webhook"
 WEBHOOK_LOG_FILE: str = "webhook/logs/data_registry_logs.log"
+
+AURORA_DSQL_ZONE: str = "eu-north-1"
+
+AURORA_DSQL_USER: str = "admin"
+INVENTORY_DB_TABLE_NAME: str = "inventory"
+SIGNING_KEY_TABLE_NAME: str = "signingkeys"
