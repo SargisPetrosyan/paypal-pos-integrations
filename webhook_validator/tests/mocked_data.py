@@ -1,8 +1,10 @@
 from typing import TypedDict
 
+
 class WebhookSubscriptionTypeDict(TypedDict):
     headers: dict[str, str]
     body: dict[str, object]
+
 
 mocked_webhook_subscription_event_valid: WebhookSubscriptionTypeDict = {
     "headers": {
@@ -86,7 +88,6 @@ mocked_webhook_subscription_event_invalid_uuid: WebhookSubscriptionTypeDict = {
         "signing_key": "test-signing-key",
     },
 }
-
 
 
 mocked_webhook_subscription_event_invalid_uuid: WebhookSubscriptionTypeDict = {
@@ -198,7 +199,7 @@ mocked_inventory_body_empty_field = {
                 "locationUuid": "523e4567-e89b-12d3-a456-426614174000",
                 "productUuid": "623e4567-e89b-12d3-a456-426614174000",
                 "variantUuid": "723e4567-e89b-12d3-a456-426614174000",
-                "balance": "", #invalid_field
+                "balance": "",  # invalid_field
             }
         ],
         "balanceAfter": [
@@ -239,7 +240,7 @@ mocked_inventory_body_empty_balance_after = {
         ],
         "balanceAfter": [
             {
-                #empty balance after
+                # empty balance after
             }
         ],
         "externalUuid": None,
@@ -253,7 +254,7 @@ mocked_inventory_body_empty_payload = {
     "eventName": "InventoryBalanceChanged",
     "messageId": "323e4567-e89b-12d3-a456-426614174000",
     "payload": {
-        #empty payload
+        # empty payload
     },
     "timestamp": "2026-11-27T11:30:01Z",
 }

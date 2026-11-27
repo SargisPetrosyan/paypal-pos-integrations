@@ -1,4 +1,3 @@
-
 from dotenv import load_dotenv
 from shared.inventory_models import InventoryBalanceUpdateValidator
 
@@ -10,6 +9,7 @@ from utils import webhook_validation, event_adapter  # type: ignore
 
 load_dotenv()
 dsql_connector = DSQLConnector()
+
 
 def lambda_handler(event, contex):  # type: ignore
     header: dict = event.get("headers")

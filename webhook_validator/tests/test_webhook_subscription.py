@@ -35,7 +35,6 @@ def test_webhook_subscription_active_status(lambda_module):
         mocked_webhook_subscription_event_invalid_uuid,
     ],
 )
-
 def test_webhook_subscription_valid_request_body(
     mocked_event: WebhookSubscriptionTypeDict, lambda_module
 ):
@@ -52,8 +51,11 @@ def test_subscription_failed_status(mocked_event, lambda_module):
     ):
         lambda_module.lambda_handler(mocked_event, None)
 
+
 def test_subscription_validation_with_valid_signature():
-    mocked_event: WebhookSubscriptionTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
+    mocked_event: WebhookSubscriptionTypeDict = deepcopy(
+        mocked_webhook_subscription_event_valid
+    )
     body: dict[str, object] = mocked_event.get("body")
     valid_key: str = "valid_key_1"
     raw_body: bytes = json.dumps(body).encode("utf-8")
@@ -75,29 +77,33 @@ def test_subscription_validation_with_valid_signature():
 
     assert result is None  # If no exception is raised, the validation passed
 
+
 def test_subscription_validation_with_empty_signature():
-    mocked_event: WebhookSubscriptionTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
+    mocked_event: WebhookSubscriptionTypeDict = deepcopy(
+        mocked_webhook_subscription_event_valid
+    )
     valid_key: str = "valid_key_1"
 
     mocked_event["headers"]["x-izettle-signature"] = ""
     webhook_signing_keys: list[tuple] = [(valid_key, "invalid_key_2", "invalid_key_3")]
 
     with pytest.raises(
-        expected_exception=ValueError,
-        match="Missing webhook signature"):
-    
+        expected_exception=ValueError, match="Missing webhook signature"
+    ):
         webhook_validation(
             header=mocked_event.get("headers"),
             body=mocked_event.get("body"),
             webhook_signing_keys=webhook_signing_keys,
         )
 
+
 def test_subscription_validation_with_empty_signing_keys():
-    mocked_event: WebhookSubscriptionTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
+    mocked_event: WebhookSubscriptionTypeDict = deepcopy(
+        mocked_webhook_subscription_event_valid
+    )
     body: dict[str, object] = mocked_event.get("body")
     valid_key: str = "valid_key_1"
     raw_body: bytes = json.dumps(body).encode("utf-8")
-
 
     valid_signature: str = hmac.new(
         key=valid_key.encode(encoding="utf-8"),
@@ -108,10 +114,9 @@ def test_subscription_validation_with_empty_signing_keys():
     mocked_event["headers"]["x-izettle-signature"] = f"sha256={valid_signature}"
     webhook_signing_keys = None
 
-    with pytest.raises (
-        expected_exception=PermissionError,
-        match="No signing keys found for validation"):
-    
+    with pytest.raises(
+        expected_exception=PermissionError, match="No signing keys found for validation"
+    ):
         webhook_validation(
             header=mocked_event.get("headers"),
             body=mocked_event.get("body"),
@@ -132,11 +137,12 @@ def test_subscription_validation_with_invalid_signature():
     ).hexdigest()
 
     mocked_event["headers"]["x-izettle-signature"] = f"sha256={valid_signature}"
-    webhook_signing_keys: list[tuple] = [(
-        "invalid_key_1",
-        "invalid_key_2",
-        "invalid_key_3",
-    )
+    webhook_signing_keys: list[tuple] = [
+        (
+            "invalid_key_1",
+            "invalid_key_2",
+            "invalid_key_3",
+        )
     ]
     with pytest.raises(
         expected_exception=PermissionError,
