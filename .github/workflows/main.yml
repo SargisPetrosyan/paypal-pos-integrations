@@ -32,7 +32,7 @@ jobs:
 
       - name: Format Code
         working-directory: webhook_validator
-        run: ruff format
+        run: uv run ruff format --check
 
       - name: Run tests
         working-directory: webhook_validator
