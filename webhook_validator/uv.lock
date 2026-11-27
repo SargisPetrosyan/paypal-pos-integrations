@@ -461,6 +461,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "aurora-dsql-python-connector" },
+    { name = "capo-sqs" },
     { name = "dotenv" },
     { name = "psycopg2-binary" },
     { name = "pydantic", extra = ["email"] },
@@ -482,6 +483,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "aurora-dsql-python-connector", specifier = ">=0.2.7" },
+    { name = "capo-sqs", specifier = ">=0.19.0" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "psycopg2-binary", specifier = ">=2.9.13" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.14.3" },
