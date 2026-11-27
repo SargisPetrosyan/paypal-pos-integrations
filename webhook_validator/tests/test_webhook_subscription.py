@@ -6,7 +6,7 @@ import pytest
 
 from pydantic import ValidationError
 from .mocked_data import (
-    WebhookRequestTypeDict,
+    WebhookSubscriptionTypeDict,
     mocked_webhook_subscription_event_valid,
     mocked_webhook_subscription_event_failed_status,
     mocked_webhook_subscription_event_invalid_data,
@@ -35,8 +35,9 @@ def test_webhook_subscription_active_status(lambda_module):
         mocked_webhook_subscription_event_invalid_uuid,
     ],
 )
-def test_webhook_subscription_invalid_request_body(
-    mocked_event: WebhookRequestTypeDict, lambda_module
+
+def test_webhook_subscription_valid_request_body(
+    mocked_event: WebhookSubscriptionTypeDict, lambda_module
 ):
     with pytest.raises(expected_exception=ValidationError):
         lambda_module.lambda_handler(mocked_event, None)
@@ -45,14 +46,14 @@ def test_webhook_subscription_invalid_request_body(
 @pytest.mark.parametrize(
     argnames="mocked_event", argvalues=[mocked_webhook_subscription_event_failed_status]
 )
-def test_webhook_subscription_failed_status(mocked_event, lambda_module):
+def test_subscription_failed_status(mocked_event, lambda_module):
     with pytest.raises(
         expected_exception=ValueError, match="Webhook subscription is not active"
     ):
         lambda_module.lambda_handler(mocked_event, None)
 
-def test_webhook_validation_with_valid_signature():
-    mocked_event: WebhookRequestTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
+def test_subscription_validation_with_valid_signature():
+    mocked_event: WebhookSubscriptionTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
     body: dict[str, object] = mocked_event.get("body")
     valid_key: str = "valid_key_1"
     raw_body: bytes = json.dumps(body).encode("utf-8")
@@ -74,8 +75,8 @@ def test_webhook_validation_with_valid_signature():
 
     assert result is None  # If no exception is raised, the validation passed
 
-def test_webhook_validation_with_empty_signature():
-    mocked_event: WebhookRequestTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
+def test_subscription_validation_with_empty_signature():
+    mocked_event: WebhookSubscriptionTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
     valid_key: str = "valid_key_1"
 
     mocked_event["headers"]["x-izettle-signature"] = ""
@@ -91,8 +92,8 @@ def test_webhook_validation_with_empty_signature():
             webhook_signing_keys=webhook_signing_keys,
         )
 
-def test_webhook_validation_with_empty_signing_keys():
-    mocked_event: WebhookRequestTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
+def test_subscription_validation_with_empty_signing_keys():
+    mocked_event: WebhookSubscriptionTypeDict = deepcopy(mocked_webhook_subscription_event_valid)
     body: dict[str, object] = mocked_event.get("body")
     valid_key: str = "valid_key_1"
     raw_body: bytes = json.dumps(body).encode("utf-8")
@@ -118,8 +119,7 @@ def test_webhook_validation_with_empty_signing_keys():
         )
 
 
-
-def test_webhook_validation_with_invalid_signature():
+def test_subscription_validation_with_invalid_signature():
     mocked_event = deepcopy(mocked_webhook_subscription_event_valid)
     body: dict[str, object] = mocked_event.get("body")
     valid_key: str = "valid_key_1"
