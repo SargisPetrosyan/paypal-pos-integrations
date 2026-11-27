@@ -11,6 +11,7 @@ dependencies = [
     "aurora-dsql-python-connector>=0.2.7",
     "psycopg2-binary>=2.9.13",
     "ruff>=0.17.6",
+    "capo-sqs>=0.19.0",
 ]
 
 [dependency-groups]
@@ -21,6 +22,7 @@ dev = [
     "aurora-dsql-python-connector>=0.2.7",
     "psycopg2-binary>=2.9.13",
     "ruff>=0.17.6",
+    "capo-sqs>=0.19.0"
 ]
 
 [tool.pytest.ini_options]
